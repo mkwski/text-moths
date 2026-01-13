@@ -1,0 +1,8 @@
+.cache/
+
+*.pch
+*.pcm
+*.o
+text_moths
+
+compile_commands.json
