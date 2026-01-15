@@ -6,7 +6,7 @@ import <cstddef>;
 import <string>;
 import <cstdint>;
 
-import text_set;
+export import text_set;
 
 namespace detail {
 
@@ -36,67 +36,80 @@ private:
         std::cerr << "ERROR " << line_number << '\n';
     }
 
-    bool parse_text(const std::smatch &match, std::size_t line_number) {
-        std::cout << "text command" << '\n';
+    bool parse_text(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (text_set_.text_num_exists(text_num)) return false;
+
+        if (text_set_.text_num_exists(text_num)) {
+            return false;
+        }
         std::string text = match[2].str();
         text_set_.add_text(text_num, text);
+
         return true;
     }
 
-    bool parse_moth(const std::smatch &match, std::size_t line_number) {
-        std::cout << "moth command" << '\n';
-        
+    bool parse_moth(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (!text_set_.text_num_exists(text_num)) return false;
+
+        if (!text_set_.text_num_exists(text_num)) {
+            return false;
+        }
+
         std::size_t pos = std::stoull(match[2].str());
-        if (pos >= text_set_.get_text_length(text_num)) return false;
+        if (pos >= text_set_.get_text_length(text_num)) {
+            return false;
+        }
+
         char kind = match[3].str()[0];
         uint64_t vitality = std::stoull(match[4].str());
         std::size_t P = std::stoull(match[5].str());
-        if (P < 1 || P > 99) return false;
+
         text_set_.add_moth(text_num, pos, kind, vitality, P);
 
         return true;
     }
 
-    bool parse_feed(const std::smatch &match, std::size_t line_number) {
-        std::cout << "feed command" << '\n';
-        
+    bool parse_feed(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (!text_set_.text_num_exists(text_num)) return false;
+
+        if (!text_set_.text_num_exists(text_num)) {
+            return false;
+        }
         unsigned int cycles = std::stoul(match[2].str());
         text_set_.feed(text_num, cycles);
 
         return true;
     }
 
-    bool parse_printm(const std::smatch &match, std::size_t line_number) {
-        std::cout << "printm command" << '\n';
-        
+    bool parse_printm(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (!text_set_.text_num_exists(text_num)) return false;
+
+        if (!text_set_.text_num_exists(text_num)) {
+            return false;
+        }
         text_set_.print_moths(text_num);
 
         return true;
     }
 
-    bool parse_printt(const std::smatch &match, std::size_t line_number) {
-        std::cout << "printt command" << '\n';
-        
+    bool parse_printt(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (!text_set_.text_num_exists(text_num)) return false;
+
+        if (!text_set_.text_num_exists(text_num)) {
+            return false;
+        }
         text_set_.print_text(text_num);
 
         return true;
     }
 
-    bool parse_delete(const std::smatch &match, std::size_t line_number) {
-        std::cout << "delete command" << '\n';
-        
+    bool parse_delete(const std::smatch &match) {
         std::size_t text_num = std::stoull(match[1].str());
-        if (!text_set_.text_num_exists(text_num)) return false;
+
+        if (!text_set_.text_num_exists(text_num)) {
+            return false;
+        }
+
         text_set_.delete_text(text_num);
 
         return true;
@@ -113,27 +126,28 @@ public:
 
         std::smatch match;
 
-        bool parse_result = true;
+        bool parse_result = false;
 
         if (std::regex_match(line, match, text_regex_)) {
-            parse_result = parse_text(match, line_number);
+            parse_result = parse_text(match);
         }
         if (std::regex_match(line, match, moth_regex_)) {
-            parse_result = parse_moth(match, line_number);
+            parse_result = parse_moth(match);
         }
         if (std::regex_match(line, match, feed_regex_)) {
-            parse_result = parse_feed(match, line_number);
+            parse_result = parse_feed(match);
         }
         if (std::regex_match(line, match, printm_regex_)) {
-            parse_result = parse_printm(match, line_number);
+            parse_result = parse_printm(match);
         }
         if (std::regex_match(line, match, printt_regex_)) {
-            parse_result = parse_printt(match, line_number);
+            parse_result = parse_printt(match);
         }
         if (std::regex_match(line, match, delete_regex_)) {
-            parse_result = parse_delete(match, line_number);
+            parse_result = parse_delete(match);
         }
-        if (parse_result) return true;
+        if (parse_result)
+            return true;
 
         print_error(line_number);
         return false;

@@ -1,5 +1,7 @@
 .cache/
 
+tests/
+
 *.pch
 *.pcm
 *.o

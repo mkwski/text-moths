@@ -6,9 +6,8 @@ import <string>;
 import <ostream>;
 import <cctype>;
 
-
 export class Moth {
-    protected:
+protected:
     static constexpr char MIN_EDIBLE = static_cast<char>(33);
     static constexpr char MAX_EDIBLE = static_cast<char>(126);
     static constexpr char UNEDIBLE_SPACE = static_cast<char>(32);
@@ -21,7 +20,8 @@ export class Moth {
     char kind_;
 
     virtual bool can_eat(char character) const noexcept {
-        if (MIN_EDIBLE <= character && character <= MAX_EDIBLE) return true;
+        if (MIN_EDIBLE <= character && character <= MAX_EDIBLE)
+            return true;
         return false;
     }
 
@@ -32,8 +32,7 @@ export class Moth {
                 uint64_t space = static_cast<uint64_t>(UNEDIBLE_SPACE);
                 vitality_ = vitality_ >= space ? vitality_ - space : 0;
             }
-        }
-        else {
+        } else {
             vitality_ += cur_char;
             text[position_] = UNEDIBLE_SPACE;
         }
@@ -41,13 +40,14 @@ export class Moth {
 
     virtual std::size_t next_move_size() noexcept = 0;
 
-    public:
-
-    Moth(uint64_t vitality, std::size_t P, std::size_t pos, char kind) : vitality_(vitality), P_(P), position_(pos), is_active_(true), kind_(kind) {}
+public:
+    Moth(uint64_t vitality, std::size_t P, std::size_t pos, char kind)
+        : vitality_(vitality), P_(P), position_(pos), is_active_(true), kind_(kind) {}
     virtual ~Moth() = default;
 
     void do_action(std::string &text) {
-        if (!is_active_) return;
+        if (!is_active_)
+            return;
         std::size_t n = text.size();
         std::size_t next_move = next_move_size();
 
@@ -63,32 +63,26 @@ export class Moth {
         eat(text);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Moth& moth);
-
+    friend std::ostream &operator<<(std::ostream &os, const Moth &moth);
 };
 
-export std::ostream& operator<<(std::ostream& os, const Moth& moth) {
+export std::ostream &operator<<(std::ostream &os, const Moth &moth) {
     os << moth.kind_ << ' ' << moth.P_ << ' ' << moth.position_ << ' ' << moth.vitality_ << '\n';
     return os;
 }
 
 export class CommonMoth : public Moth {
-    private:
-    std::size_t next_move_size() noexcept override {
-        return P_;
-    }
+private:
+    std::size_t next_move_size() noexcept override { return P_; }
 
-    public:
+public:
     static constexpr char KIND = '*';
     CommonMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '*') {}
 };
 
 export class LetterMoth : public Moth {
-    private:
-
-    std::size_t next_move_size() noexcept override {
-        return P_;
-    }
+private:
+    std::size_t next_move_size() noexcept override { return P_; }
 
     bool can_eat(char character) const noexcept override {
         if (std::isalpha(static_cast<unsigned char>(character))) {
@@ -97,18 +91,14 @@ export class LetterMoth : public Moth {
         return false;
     }
 
-    public:
+public:
     static constexpr char KIND = 'A';
     LetterMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, 'A') {}
-
 };
 
 export class DigitMoth : public Moth {
-    private:
-
-    std::size_t next_move_size() noexcept override {
-        return P_;
-    }
+private:
+    std::size_t next_move_size() noexcept override { return P_; }
 
     bool can_eat(char character) const noexcept override {
         if (std::isdigit(static_cast<unsigned char>(character))) {
@@ -117,15 +107,13 @@ export class DigitMoth : public Moth {
         return false;
     }
 
-    public:
+public:
     static constexpr char KIND = '1';
     DigitMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '1') {}
-
 };
 
 export class FussyMoth : public Moth {
-    private:
-
+private:
     std::size_t last_move_size_;
 
     std::size_t next_move_size() noexcept override {
@@ -133,17 +121,15 @@ export class FussyMoth : public Moth {
     }
 
     bool can_eat(char character) const noexcept override {
-        if (
-            !(std::isalnum(static_cast<unsigned char>(character)))
-            && 
-            (MIN_EDIBLE <= character && character <= MAX_EDIBLE)
-        ) {
+        if (!(std::isalnum(static_cast<unsigned char>(character))) &&
+            (MIN_EDIBLE <= character && character <= MAX_EDIBLE)) {
             return true;
         }
         return false;
     }
 
-    public:
+public:
     static constexpr char KIND = '!';
-    FussyMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '!'), last_move_size_(0) {}
+    FussyMoth(uint64_t vitality, std::size_t P, std::size_t pos)
+        : Moth(vitality, P, pos, '!'), last_move_size_(0) {}
 };
