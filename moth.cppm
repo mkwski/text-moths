@@ -4,13 +4,14 @@ import <cstdint>;
 import <cstddef>;
 import <string>;
 import <ostream>;
+import <cctype>;
 
 
 export class Moth {
     protected:
-    static constexpr uint8_t MIN_EDIBLE = 33;
-    static constexpr uint8_t MAX_EDIBLE = 126;
-    static constexpr uint8_t UNEDIBLE_SPACE = 32;
+    static constexpr char MIN_EDIBLE = static_cast<char>(33);
+    static constexpr char MAX_EDIBLE = static_cast<char>(126);
+    static constexpr char UNEDIBLE_SPACE = static_cast<char>(32);
     static constexpr uint64_t MOVE_COST = 10;
 
     uint64_t vitality_;
@@ -19,22 +20,22 @@ export class Moth {
     bool is_active_;
     char kind_;
 
-    virtual bool can_eat(uint8_t character) const noexcept {
+    virtual bool can_eat(char character) const noexcept {
         if (MIN_EDIBLE <= character && character <= MAX_EDIBLE) return true;
         return false;
     }
 
     void eat(std::string &text) noexcept {
-        uint8_t cur_char = static_cast<uint8_t>(text[position_]);
+        char cur_char = text[position_];
         if (!can_eat(cur_char)) {
-            // TODO: Ask if the moth loses vitality on other chars than the space.
             if (cur_char == UNEDIBLE_SPACE) {
-                vitality_ = vitality_ >= UNEDIBLE_SPACE ? vitality_ - UNEDIBLE_SPACE : 0;
+                uint64_t space = static_cast<uint64_t>(UNEDIBLE_SPACE);
+                vitality_ = vitality_ >= space ? vitality_ - space : 0;
             }
         }
         else {
             vitality_ += cur_char;
-            text[position_] = static_cast<char>(UNEDIBLE_SPACE);
+            text[position_] = UNEDIBLE_SPACE;
         }
     }
 
@@ -84,21 +85,12 @@ export class CommonMoth : public Moth {
 export class LetterMoth : public Moth {
     private:
 
-    static constexpr uint8_t FIRST_LOWERCASE_LETTER = static_cast<uint8_t>('a');
-    static constexpr uint8_t LAST_LOWERCASE_LETTER = static_cast<uint8_t>('z');
-    static constexpr uint8_t FIRST_UPPERCASE_LETTER = static_cast<uint8_t>('A');
-    static constexpr uint8_t LAST_UPPERCASE_LETTER = static_cast<uint8_t>('Z');
-
     std::size_t next_move_size() noexcept override {
         return P_;
     }
 
-    bool can_eat(uint8_t character) const noexcept override {
-        if (
-            (FIRST_LOWERCASE_LETTER <= character && character <= LAST_LOWERCASE_LETTER)
-            ||
-            (FIRST_UPPERCASE_LETTER <= character && character <= LAST_UPPERCASE_LETTER)
-        ) {
+    bool can_eat(char character) const noexcept override {
+        if (std::isalpha(static_cast<unsigned char>(character))) {
             return true;
         }
         return false;
@@ -111,17 +103,13 @@ export class LetterMoth : public Moth {
 
 export class DigitMoth : public Moth {
     private:
-    static constexpr uint8_t FIRST_DIGIT = static_cast<uint8_t>('0');
-    static constexpr uint8_t LAST_DIGIT = static_cast<uint8_t>('9');
 
     std::size_t next_move_size() noexcept override {
         return P_;
     }
 
-    bool can_eat(uint8_t character) const noexcept override {
-        if (
-            (FIRST_DIGIT <= character && character <= LAST_DIGIT)
-        ) {
+    bool can_eat(char character) const noexcept override {
+        if (std::isdigit(static_cast<unsigned char>(character))) {
             return true;
         }
         return false;
@@ -134,12 +122,6 @@ export class DigitMoth : public Moth {
 
 export class FussyMoth : public Moth {
     private:
-    static constexpr uint8_t FIRST_LOWERCASE_LETTER = static_cast<uint8_t>('a');
-    static constexpr uint8_t LAST_LOWERCASE_LETTER = static_cast<uint8_t>('z');
-    static constexpr uint8_t FIRST_UPPERCASE_LETTER = static_cast<uint8_t>('A');
-    static constexpr uint8_t LAST_UPPERCASE_LETTER = static_cast<uint8_t>('Z');
-    static constexpr uint8_t FIRST_DIGIT = static_cast<uint8_t>('0');
-    static constexpr uint8_t LAST_DIGIT = static_cast<uint8_t>('9');
 
     std::size_t last_move_size_;
 
@@ -147,13 +129,9 @@ export class FussyMoth : public Moth {
         return last_move_size_ = (last_move_size_ % P_) + 1;
     }
 
-    bool can_eat(uint8_t character) const noexcept override {
+    bool can_eat(char character) const noexcept override {
         if (
-            !(FIRST_DIGIT <= character && character <= LAST_DIGIT)
-            &&
-            !(FIRST_LOWERCASE_LETTER <= character && character <= LAST_LOWERCASE_LETTER)
-            &&
-            !(FIRST_UPPERCASE_LETTER <= character && character <= LAST_UPPERCASE_LETTER)
+            !(std::isalnum(static_cast<unsigned char>(character)))
             && 
             (MIN_EDIBLE <= character && character <= MAX_EDIBLE)
         ) {
