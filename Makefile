@@ -6,11 +6,11 @@ CXX_FLAGS := -std=c++23 -O2 \
 	-Wno-experimental-header-units \
 	-Wno-pragma-system-header-outside-header \
 
-PCH_HEADERS := iostream regex string cstdint cstddef ostream cctype
+PCH_HEADERS := iostream regex string cstdint cstddef ostream cctype vector memory
 PCH_FILES := $(addsuffix .pch,$(PCH_HEADERS))
 PCH_FLAGS := $(addprefix -fmodule-file=,$(PCH_FILES))
 
-MODULES := parser moth
+MODULES := parser moth text
 PCM_FILES := $(addsuffix .pcm,$(MODULES))
 MOD_OBJ_FILES := $(addsuffix .o,$(MODULES))
 
@@ -36,7 +36,7 @@ text_moths: $(MOD_OBJ_FILES) main.o
 		-fprebuilt-module-path=. \
 		-c $< -o $@
 
-main.o: main.cpp parser.pcm $(PCH_FILES)
+main.o: main.cpp $(PCM_FILES) $(PCH_FILES)
 	$(CXX) $(CXX_FLAGS) \
 		-fprebuilt-module-path=. \
 		$(PCH_FLAGS) \

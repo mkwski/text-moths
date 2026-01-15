@@ -2,6 +2,7 @@ export module parser;
 
 import <iostream>;
 import <regex>;
+import <cstddef>;
 
 namespace detail {
 
@@ -25,41 +26,41 @@ private:
     inline static const std::regex printt_regex_{detail::PRINTT_REGEX_PATTERN.data()};
     inline static const std::regex delete_regex_{detail::DELETE_REGEX_PATTERN.data()};
 
-    void print_error(size_t line_number) const noexcept {
+    void print_error(std::size_t line_number) const noexcept {
         std::cerr << "ERROR " << line_number << '\n';
     }
 
-    bool parse_text(const std::smatch &match, size_t line_number) {
+    bool parse_text(const std::smatch &match, std::size_t line_number) {
         std::cout << "text command" << '\n';
         // TODO:: implement
         return false;
     }
 
-    bool parse_moth(const std::smatch &match, size_t line_number) {
+    bool parse_moth(const std::smatch &match, std::size_t line_number) {
         std::cout << "moth command" << '\n';
         // TODO:: implement
         return false;
     }
 
-    bool parse_feed(const std::smatch &match, size_t line_number) {
+    bool parse_feed(const std::smatch &match, std::size_t line_number) {
         std::cout << "feed command" << '\n';
         // TODO:: implement
         return false;
     }
 
-    bool parse_printm(const std::smatch &match, size_t line_number) {
+    bool parse_printm(const std::smatch &match, std::size_t line_number) {
         std::cout << "printm command" << '\n';
         // TODO:: implement
         return false;
     }
 
-    bool parse_printt(const std::smatch &match, size_t line_number) {
+    bool parse_printt(const std::smatch &match, std::size_t line_number) {
         std::cout << "printt command" << '\n';
         // TODO:: implement
         return false;
     }
 
-    bool parse_delete(const std::smatch &match, size_t line_number) {
+    bool parse_delete(const std::smatch &match, std::size_t line_number) {
         std::cout << "delete command" << '\n';
         // TODO:: implement
         return false;
@@ -68,7 +69,7 @@ private:
 public:
     Parser() = default;
 
-    bool parse_line(const std::string &line, size_t line_number) {
+    bool parse_line(const std::string &line, std::size_t line_number) {
         if (line.empty()) {
             print_error(line_number);
             return false;

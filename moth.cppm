@@ -79,6 +79,7 @@ export class CommonMoth : public Moth {
     }
 
     public:
+    static constexpr char KIND = '*';
     CommonMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '*') {}
 };
 
@@ -97,6 +98,7 @@ export class LetterMoth : public Moth {
     }
 
     public:
+    static constexpr char KIND = 'A';
     LetterMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, 'A') {}
 
 };
@@ -116,6 +118,7 @@ export class DigitMoth : public Moth {
     }
 
     public:
+    static constexpr char KIND = '1';
     DigitMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '1') {}
 
 };
@@ -141,5 +144,6 @@ export class FussyMoth : public Moth {
     }
 
     public:
+    static constexpr char KIND = '!';
     FussyMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '!'), last_move_size_(0) {}
 };
