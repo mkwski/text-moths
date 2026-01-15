@@ -6,11 +6,11 @@ CXX_FLAGS := -std=c++23 -O2 \
 	-Wno-experimental-header-units \
 	-Wno-pragma-system-header-outside-header \
 
-PCH_HEADERS := iostream regex string cstdint cstddef ostream cctype vector memory
+PCH_HEADERS := iostream regex string cstdint cstddef ostream cctype vector memory unordered_map
 PCH_FILES := $(addsuffix .pch,$(PCH_HEADERS))
 PCH_FLAGS := $(addprefix -fmodule-file=,$(PCH_FILES))
 
-MODULES := parser moth text
+MODULES := parser moth text text_set
 PCM_FILES := $(addsuffix .pcm,$(MODULES))
 MOD_OBJ_FILES := $(addsuffix .o,$(MODULES))
 

@@ -14,7 +14,7 @@ export class Text {
     std::string text_;
 
     public:
-
+    Text() = default;
     Text(const std::string& text) : text_(text) {}
     void place_moth(std::size_t pos, char kind, uint64_t vitality, std::size_t P) {
         if (kind == CommonMoth::KIND) {

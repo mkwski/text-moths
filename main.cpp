@@ -5,6 +5,7 @@ import <cstddef>;
 import parser;
 import text;
 import moth;
+import text_set;
 
 int main() {
     std::string line;
