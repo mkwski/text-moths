@@ -6,6 +6,7 @@ import <string>;
 import <ostream>;
 import <cctype>;
 
+// Base class for moth behavior and state.
 export class Moth {
 protected:
     static constexpr char MIN_EDIBLE = static_cast<char>(33);
@@ -19,12 +20,14 @@ protected:
     bool is_active_;
     char kind_;
 
+    // Returns whether the moth can eat the given character.
     virtual bool can_eat(char character) const noexcept {
         if (MIN_EDIBLE <= character && character <= MAX_EDIBLE)
             return true;
         return false;
     }
 
+    // Tries to eat the character at the current position.
     void eat(std::string &text) noexcept {
         char cur_char = text[position_];
         if (!can_eat(cur_char)) {
@@ -38,13 +41,16 @@ protected:
         }
     }
 
+    // Computes the move distance for the next action.
     virtual std::size_t next_move_size() noexcept = 0;
 
 public:
     Moth(uint64_t vitality, std::size_t P, std::size_t pos, char kind)
-        : vitality_(vitality), P_(P), position_(pos), is_active_(true), kind_(kind) {}
+        : vitality_(vitality), P_(P), position_(pos), is_active_(true),
+          kind_(kind) {}
     virtual ~Moth() = default;
 
+    // Performs one movement and eating action if active.
     void do_action(std::string &text) {
         if (!is_active_)
             return;
@@ -67,19 +73,23 @@ public:
 };
 
 export std::ostream &operator<<(std::ostream &os, const Moth &moth) {
-    os << moth.kind_ << ' ' << moth.P_ << ' ' << moth.position_ << ' ' << moth.vitality_ << '\n';
+    os << moth.kind_ << ' ' << moth.P_ << ' ' << moth.position_ << ' '
+       << moth.vitality_ << '\n';
     return os;
 }
 
+// Moth that eats any edible character.
 export class CommonMoth : public Moth {
 private:
     std::size_t next_move_size() noexcept override { return P_; }
 
 public:
     static constexpr char KIND = '*';
-    CommonMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '*') {}
+    CommonMoth(uint64_t vitality, std::size_t P, std::size_t pos)
+        : Moth(vitality, P, pos, '*') {}
 };
 
+// Moth that eats only letters.
 export class LetterMoth : public Moth {
 private:
     std::size_t next_move_size() noexcept override { return P_; }
@@ -93,9 +103,11 @@ private:
 
 public:
     static constexpr char KIND = 'A';
-    LetterMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, 'A') {}
+    LetterMoth(uint64_t vitality, std::size_t P, std::size_t pos)
+        : Moth(vitality, P, pos, 'A') {}
 };
 
+// Moth that eats only digits.
 export class DigitMoth : public Moth {
 private:
     std::size_t next_move_size() noexcept override { return P_; }
@@ -109,9 +121,11 @@ private:
 
 public:
     static constexpr char KIND = '1';
-    DigitMoth(uint64_t vitality, std::size_t P, std::size_t pos) : Moth(vitality, P, pos, '1') {}
+    DigitMoth(uint64_t vitality, std::size_t P, std::size_t pos)
+        : Moth(vitality, P, pos, '1') {}
 };
 
+// Moth that eats non-alphanumeric edible characters and cycles move sizes.
 export class FussyMoth : public Moth {
 private:
     std::size_t last_move_size_;

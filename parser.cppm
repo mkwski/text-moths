@@ -8,6 +8,7 @@ import <cstdint>;
 
 export import text_set;
 
+// Regex patterns for input commands.
 namespace detail {
 
 constexpr std::string_view TEXT_REGEX_PATTERN = R"(^TEXT (\d+) ([!-~]+)$)";
@@ -20,18 +21,26 @@ constexpr std::string_view DELETE_REGEX_PATTERN = R"(^DELETE (\d+)$)";
 
 } // namespace detail
 
+// Parses input lines and executes commands on the text set.
 export class Parser {
 
 private:
-    inline static const std::regex text_regex_{detail::TEXT_REGEX_PATTERN.data()};
-    inline static const std::regex moth_regex_{detail::MOTH_REGEX_PATTERN.data()};
-    inline static const std::regex feed_regex_{detail::FEED_REGEX_PATTERN.data()};
-    inline static const std::regex printm_regex_{detail::PRINTM_REGEX_PATTERN.data()};
-    inline static const std::regex printt_regex_{detail::PRINTT_REGEX_PATTERN.data()};
-    inline static const std::regex delete_regex_{detail::DELETE_REGEX_PATTERN.data()};
+    inline static const std::regex text_regex_{
+        detail::TEXT_REGEX_PATTERN.data()};
+    inline static const std::regex moth_regex_{
+        detail::MOTH_REGEX_PATTERN.data()};
+    inline static const std::regex feed_regex_{
+        detail::FEED_REGEX_PATTERN.data()};
+    inline static const std::regex printm_regex_{
+        detail::PRINTM_REGEX_PATTERN.data()};
+    inline static const std::regex printt_regex_{
+        detail::PRINTT_REGEX_PATTERN.data()};
+    inline static const std::regex delete_regex_{
+        detail::DELETE_REGEX_PATTERN.data()};
 
     TextSet text_set_;
 
+    // Prints a standardized error message.
     void print_error(std::size_t line_number) const noexcept {
         std::cerr << "ERROR " << line_number << '\n';
     }
@@ -118,6 +127,7 @@ private:
 public:
     Parser() = default;
 
+    // Validates and dispatches a single input line.
     bool parse_line(const std::string &line, std::size_t line_number) {
         if (line.empty()) {
             print_error(line_number);
